@@ -1,0 +1,8 @@
+NNIris
+3
+2
+2
+sigmoid
+4
+5
+3
