@@ -2,8 +2,8 @@
 --Author: Joao P Maia
 --This file takes care of all the neual network part
 local nn = {}
-matrix = require('./LuaNet.Lib.Matrix') -- MODULE ISSUE||If the "module issue" error described in the documentation has occurred. Please change and path to point to Matrix.lua file
-csv = require('./LuaNet.Lib.csvHandler') --MODULE ISSUE ||If the "module issue" error described in the documentation has occurred. Please change and path to point to csvHandler.lua file
+matrix = require('Lib.Matrix') -- MODULE ISSUE||If the "module issue" error described in the documentation has occurred. Please change and path to point to Matrix.lua file
+csv = require('Lib.csvHandler') --MODULE ISSUE ||If the "module issue" error described in the documentation has occurred. Please change and path to point to csvHandler.lua file
 
 
 --Aux Functions
