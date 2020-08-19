@@ -2,8 +2,8 @@
 --Author: Joao P Maia
 --This file takes care of all the neual network part
 local nn = {}
-matrix = require('Lib.Matrix') -- MODULE ISSUE||If the "module issue" error described in the documentation has occurred. Please change and path to point to Matrix.lua file
-csv = require('Lib.csvHandler') --MODULE ISSUE ||If the "module issue" error described in the documentation has occurred. Please change and path to point to csvHandler.lua file
+local matrix = require('Lib.Matrix') -- MODULE ISSUE||If the "module issue" error described in the documentation has occurred. Please change and path to point to Matrix.lua file
+local csv = require('Lib.csvHandler') --MODULE ISSUE ||If the "module issue" error described in the documentation has occurred. Please change and path to point to csvHandler.lua file
 
 
 --Aux Functions
@@ -68,7 +68,7 @@ function contains(table, val)
    return false
 end
 function round(number, decimals)
-    decimals = 10 or decimals
+    local decimals = 10 or decimals
     local power = 10^decimals
     return math.floor(number * power) / power
 end
@@ -99,11 +99,16 @@ end
 --Basic Functions
 --
 
+function nn.check()
+  print("Nueral Netwotk module loaded || NeuralNet V1.1.0 by JP Maia")
+    
+end
+
 --Create a NN table
 function nn.new(neurons,activation)
-  activation = activation or "sigmoid"
+  local activation = activation or "sigmoid"
   
-  neural = {}
+   local neural = {}
   -- store each neuron numbers
   neural.neurons = neurons
   --Store the weights
@@ -119,9 +124,9 @@ function nn.new(neurons,activation)
   end
   
   --Generate radom weights
-  i = 1
+  local i = 1
   while i<#neurons do
-    weight_n = matrix.newrdn(neurons[i+1],neurons[i])
+    local weight_n = matrix.newrdn(neurons[i+1],neurons[i])
     table.insert(neural.weights,weight_n)
     i = i+1
   end
@@ -130,7 +135,7 @@ function nn.new(neurons,activation)
   neural.bias = {}
   i = 1
   while i<#neurons do
-    bias_n = matrix.newzero(neurons[i+1],1)
+    local bias_n = matrix.newzero(neurons[i+1],1)
     table.insert(neural.bias,bias_n)
     i = i+1
   end
@@ -141,14 +146,14 @@ end
 --Predicts
 function nn.preddict(neural,x,trainning)
   --Transfrom x in matrix
-  input = matrix.newfromarray(x)
+  local input = matrix.newfromarray(x)
   
   -- y = inputs
-   y = {}
+   local y = {}
    table.insert(y,input)
    
   -- preddicting
-  i = 1
+  local i = 1
   while i <= #neural.weights do
     Y_n = matrix.dot(neural.weights[i],y[i])
     Y_n = matrix.sum(Y_n,neural.bias[i])
@@ -171,35 +176,35 @@ function nn.preddict(neural,x,trainning)
 --Trainning
 function nn.train(neural,input_x,target_y,lr)
   -- lr = learning rate
-  lr = lr or 0.5
+  local lr = lr or 0.5
   --preparation
-  y = nn.preddict(neural,input_x,1)
-  target_y = matrix.newfromarray(target_y)
-  errors = {}
+  local y = nn.preddict(neural,input_x,1)
+  local target_y = matrix.newfromarray(target_y)
+  local errors = {}
   --step A, calcutae overall error
-  total_err = matrix.sub(target_y,y[#y])
+  local total_err = matrix.sub(target_y,y[#y])
   
   table.insert(errors,total_err)
   
   -- calculating erros in each layer
-   i = #neural.weights
-   k = 1
+   local i = #neural.weights
+   local k = 1
    while i > 1 do
-    layer_trasposed = matrix.transpose(neural.weights[i])
-    erro_n = matrix.dot(layer_trasposed,errors[k])
+    local layer_trasposed = matrix.transpose(neural.weights[i])
+    local erro_n = matrix.dot(layer_trasposed,errors[k])
     table.insert(errors,erro_n)
     i = i-1
     k = k+1
   end
   
   -- calculating the deltas
-  deltas = {}
+  local deltas = {}
   i = 1
   k = #y
-  b = #neural.bias
+  local  b = #neural.bias
   while i <= #neural.weights do
-  gradient_n = y[k]
-  gradient_n = matrix.map(gradient_n,neural.Dactivation)
+  local gradient_n = y[k]
+  local gradient_n = matrix.map(gradient_n,neural.Dactivation)
   
   -- mutiplicar gradiente pelo erro
   gradient_n = matrix.mult(gradient_n,errors[i])
@@ -210,8 +215,8 @@ function nn.train(neural,input_x,target_y,lr)
   b = b-1
   
   -- transpor o que esta saindo
-  exiting = matrix.transpose(y[k-1])
-  delta =  matrix.dot(gradient_n,exiting)
+  local exiting = matrix.transpose(y[k-1])
+  local delta =  matrix.dot(gradient_n,exiting)
   
   table.insert(deltas,delta)
   
@@ -251,7 +256,8 @@ end
 
 --Geral data to trainnig
 function nn.newdataset(labels,target,file,sep)
-  sep =  sep or ","
+  local sep =  sep or ","
+  local target_to_num
   
   local dataset = {}
   dataset.x = {}
@@ -288,7 +294,7 @@ function nn.newdataset(labels,target,file,sep)
   -- convert the rest here
   for j=1,#labels do
     dataset.Xlabel[j] = {} -- create a table for each label
-    index = labels[j]
+    local index = labels[j]
     for i=1,#data do
       if contains(dataset.Xlabel[j],data[i][index]) == false then
       table.insert(dataset.Xlabel[j],data[i][index])
@@ -334,12 +340,12 @@ function nn.traindataset(neural,dataset,options)
   local label = options.label or false
   
   --starting
-  trainnig_data = #dataset.x - math.floor(#dataset.x*validation) 
-  validation_data = math.floor(#dataset.x*validation)
+  local trainnig_data = #dataset.x - math.floor(#dataset.x*validation) 
+  local validation_data = math.floor(#dataset.x*validation)
   
   
   --trainnig for given epochs
-  run = 0
+  local run = 0
   while run<epochs do
     if debug then
       print("Epoch "..run..' of '..epochs)
@@ -352,11 +358,11 @@ function nn.traindataset(neural,dataset,options)
 
   --validate trannig
   --Accuracy
-  acc = 0 
+  local acc = 0 
   for i=trainnig_data,#dataset.x do
-    preddiction = nn.preddict(neural,dataset.x[i])
-    true_y = dataset.y[i]
-    true_y = matrix.newfromarray(true_y)
+    local preddiction = nn.preddict(neural,dataset.x[i])
+    local true_y = dataset.y[i]
+    local true_y = matrix.newfromarray(true_y)
     
     --accuracy for classification
     if label then
@@ -376,8 +382,8 @@ function nn.traindataset(neural,dataset,options)
 end
 --transform a matrix into a label
 function nn.getlabel(dataset,mat)
-  arr = matrix.toarray(mat)
-  best = 1
+  local arr = matrix.toarray(mat)
+  local best = 1
   for i=1,#arr do
     if arr[i] > arr[best] then
       best = i
@@ -396,11 +402,11 @@ function nn.save(neural,path,personal_name)
   personal_name = personal_name or math.random(0,1000)
   
   --NN Info
-  name = "NN"..personal_name
+  local name = "NN"..personal_name
   name = tostring(name)
   
   --NN Save geral Info
-  info = io.open(path..name..".txt", "a")
+  local info = io.open(path..name..".txt", "a")
   info:write(name.."\n")
   info:write(#neural.neurons.."\n")
   info:write(#neural.weights.."\n")
@@ -411,9 +417,9 @@ function nn.save(neural,path,personal_name)
   end
 
   --NN Save geral Neurons
-  n = io.open(path..name.."Neurons"..".txt", "a")
+  local n = io.open(path..name.."Neurons"..".txt", "a")
   for k=1,#neural.neurons do
-    neurons = neural.neurons[k]
+    local neurons = neural.neurons[k]
     n:write(neurons.."\n")
   end
     
@@ -421,8 +427,8 @@ function nn.save(neural,path,personal_name)
     
   --NN Save weights
   for k=1,#neural.weights do
-    w = io.open(path..name.."Weights"..k..".txt", "a")
-    weight = neural.weights[k]
+    local w = io.open(path..name.."Weights"..k..".txt", "a")
+    local weight = neural.weights[k]
     for i=1,weight.rows do
       for j=1,weight.cols do
             w:write(weight.matrix[i][j].."\n")
@@ -433,8 +439,8 @@ function nn.save(neural,path,personal_name)
   
   --Save Bias
   for k=1,#neural.bias do
-    b = io.open(path..name.."Bias"..k..".txt", "a")
-    bias = neural.bias[k]
+    local b = io.open(path..name.."Bias"..k..".txt", "a")
+    local bias = neural.bias[k]
     for i=1,bias.rows do
       for j=1,bias.cols do
             b:write(bias.matrix[i][j].."\n")
@@ -448,23 +454,23 @@ end
 function nn.load(path,name)
   
   --Create NN table
-  neural = {}
+  local neural = {}
   neural.weights = {}
   neural.bias = {}
   neural.neurons = {}
   
   
   --Get Info
-  inf = io.open(path..name..".txt", "r")
-  info = {}
+  local inf = io.open(path..name..".txt", "r")
+  local info = {}
   for line in inf:lines () do
     table.insert(info,line)
   end 
 
   name = info[1]
-  neurons_N = info[2]
-  weights = tonumber(info[3])
-  bias = tonumber(info[4])
+  local neurons_N = info[2]
+  local weights = tonumber(info[3])
+  local bias = tonumber(info[4])
   neural.F_activation = info[5]
   
   for i = 6, #info do
@@ -473,19 +479,19 @@ function nn.load(path,name)
   
   
   --Get neurons
-    neurons = {}
-    neurons_path = path..name.."Neurons"..".txt"
-    n = io.open(neurons_path, "r")
+    local neurons = {}
+    local neurons_path = path..name.."Neurons"..".txt"
+    local n = io.open(neurons_path, "r")
   for line in n:lines () do
       table.insert(neurons,tonumber(line))
   end
 
   
   --Get weights
-  weights_values = {}
+  local weights_values = {}
   for i=1,weights do
-    weights_path = path..name.."Weights"..i..".txt"
-    w = io.open(weights_path, "r")
+    local weights_path = path..name.."Weights"..i..".txt"
+    local w = io.open(weights_path, "r")
     weights_values[i] = {}
     for line in w:lines () do
       table.insert(weights_values[i],tonumber(line))
@@ -495,10 +501,10 @@ function nn.load(path,name)
   
   
   --Get BIAS
-  bias_values = {}
+  local bias_values = {}
   for i=1,bias do
-    bias_path = path..name.."Bias"..i..".txt"
-    b = io.open(bias_path, "r")
+    local bias_path = path..name.."Bias"..i..".txt"
+    local b = io.open(bias_path, "r")
     bias_values[i] = {}
     for line in b:lines () do
       table.insert(bias_values[i],tonumber(line))
@@ -521,7 +527,7 @@ function nn.load(path,name)
   
   
   
-  if activation == "tanh" then
+  if neural.F_activation == "tanh" then
     neural.activation = tanh
     neural.Dactivation = Dtanh
   else
@@ -538,7 +544,7 @@ end
 
 --Copy
 function nn.copy(neural)
-  new_neural = neural
+  local new_neural = neural
   return new_neural
 end
 --Mutate
@@ -547,11 +553,11 @@ function nn.mutate(neural,mutation_type,mutation_rate,func_mutation)
   func_mutation = nil or func_mutation
   mutation_rate = 0.50 or mutation_rate
   func_mutation = func_mutation or function(x) return math.cos(x) end
+  local weights = {}
   
   --Shuffle mutation
   if mutation_type == "shuffle" then
     -- get weights
-    weights = {}
     for i=1,#neural.weights do
       weights[i] = matrix.toarray(neural.weights[i])
     end
@@ -562,9 +568,9 @@ function nn.mutate(neural,mutation_type,mutation_rate,func_mutation)
     end
     
     -- insert mutation
-    i = 1
+    local i = 1
     while i<#neural.neurons do
-      weight_n = matrix.new(neural.neurons[i+1],neural.neurons[i],weights[i])
+      local weight_n = matrix.new(neural.neurons[i+1],neural.neurons[i],weights[i])
       neural.weights[i] = weight_n
       i = i+1
   end
@@ -574,7 +580,7 @@ function nn.mutate(neural,mutation_type,mutation_rate,func_mutation)
   --random mutation
   if mutation_type == "random" then
     for i=1,math.ceil(#weights*mutation_rate) do
-      r = math.random(1,#neural.weights[i])
+      local r = math.random(1,#neural.weights[i])
       neural.weights[i] = matrix.mult1D(neural.weights[i],math.random()*math.random(-9,9))
     end
   end
@@ -589,7 +595,7 @@ end
 -- Crossover
 function nn.crossover(neuralA,neuralB)
 
-  child = nn.new(neuralA.neurons)
+  local child = nn.new(neuralA.neurons)
   
   for i=1,#child.weights do
     if i%2 == 0 then
