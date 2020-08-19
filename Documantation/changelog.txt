@@ -1,0 +1,6 @@
+v1.0.0 - Inital Commit 5/6/2020
+
+v1.1.0 - Bugfixes 19/8/2020
++ [Fixed] Little bug when loading NN table in the activation functions 
++[FIxed] Local and Global Variables
++[Added] check function in NeuralLua.lua file
