@@ -1,4 +1,4 @@
-csv = {}
+local csv = {}
 math.randomseed(os.time())
 --AUX
 function shuffle(array)
@@ -77,14 +77,14 @@ end
 function csv.totrain(arq,sep)
   sep = sep or ","
   --Load the file
-  file = csv.readfile(arq)
+  local file = csv.readfile(arq)
   --Parse data
-  data_parse = {}
+  local data_parse = {}
   for i=2, #file do
     table.insert(data_parse,csv.parseCSVLine(file[i],sep))
   end
   -- shuffle the data
-  data = shuffle(data_parse)
+  local data = shuffle(data_parse)
   return data
 end
 return csv
